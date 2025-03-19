@@ -1,0 +1,10 @@
+@mixin flexSort($justify, $alignItems) {
+  display: flex;
+  justify-content: $justify;
+  align-items: $alignItems;
+}
+
+@mixin commonBorder($width) {
+  border: $width solid black;
+  border-radius: 10px;
+}
