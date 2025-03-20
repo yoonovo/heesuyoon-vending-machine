@@ -184,16 +184,21 @@ const VendingMachinePage = () => {
         {/* 제품 선택시 배출구 노출*/}
         {stepNumber >= 1 && (
           <div className="dispenser">
-            {Object.keys(purchasedProducts).map((v) =>
-              purchasedProducts[v] > 0 ? (
-                <div key={`dispenser_${v}`}>
-                  {v} {purchasedProducts[v]}개
-                </div>
-              ) : (
-                ""
-              )
-            )}
-            <button>꺼내기</button>
+            <ul className="purchased-products">
+              {productsInfo.map(({ name, color }) =>
+                purchasedProducts[name] > 0 ? (
+                  <li
+                    key={`purchased_products_${name}`}
+                    style={{ background: color }}
+                  >
+                    {name} {purchasedProducts[name]}개
+                  </li>
+                ) : (
+                  ""
+                )
+              )}
+            </ul>
+            <button className="dispenser-button">꺼내기</button>
           </div>
         )}
       </div>
