@@ -1,35 +1,34 @@
 import { insertComma } from "../../utils/number";
 import {
   cashType,
-  cashInfoType,
-  inputCashType,
+  cashReserveType,
+  insertedCashType,
 } from "../../types/VendingMachineType";
 import "./PaymentCash.scss";
-import { initInputCash } from "../../constants";
+import { initInsertedCash } from "../../constants";
 
 type PaymentCashProp = {
-  stepNumber: number;
-  inputCash: inputCashType;
-  cashInfo: cashInfoType[];
-  setInputCash: (v: inputCashType) => void;
-  success: () => void;
-  cancel: () => void;
+  currentStep: number;
+  insertedCash: insertedCashType;
+  cashReserve: cashReserveType[];
+  setInsertedCash: (v: insertedCashType) => void;
+  setProcessStep: (v: number) => void;
+  onCancel: () => void;
 };
 
-const MAX_VALUE = 50000; // 최대 투입가능 금액
-
 const PaymentCash = ({
-  stepNumber,
-  inputCash,
-  cashInfo,
-  setInputCash,
-  success,
-  cancel,
+  currentStep,
+  insertedCash,
+  cashReserve,
+  setInsertedCash,
+  setProcessStep,
+  onCancel,
 }: PaymentCashProp) => {
-  const handleInputCash = (value: cashType) => {
-    const { total: tot, count: cnt } = inputCash;
+  // 현금 투입시 동작
+  const handleInsertedCash = (value: cashType) => {
+    const { total: tot, count: cnt } = insertedCash;
 
-    if (tot + value > MAX_VALUE) {
+    if (tot + value > 50000) {
       alert("5만원 이상은 투입이 불가능 합니다.");
       return;
     }
@@ -41,47 +40,47 @@ const PaymentCash = ({
       return t;
     }, 0);
 
-    setInputCash({ total, count });
+    setInsertedCash({ total, count });
   };
 
-  const handleComplete = () => {
-    if (inputCash.total === 0) {
+  const handleNextStep = () => {
+    if (insertedCash.total === 0) {
       alert("투입된 금액이 없습니다.");
       return;
     }
-    success();
+
+    setProcessStep(1); // 제품선택 단계로 변경
   };
 
-  const reset = () => {
-    setInputCash(initInputCash);
+  // 투입한 현금 반환
+  const handleReturnCash = () => {
+    setInsertedCash(initInsertedCash);
   };
 
   return (
     <div className="payment-cash">
-      <h2>총 금액 : {insertComma(inputCash.total)}원</h2>
-      {stepNumber === 0 && (
+      <h2>총 금액 : {insertComma(insertedCash.total)}원</h2>
+      {currentStep === 0 ? (
         <>
           <p>현금을 투입해주세요.</p>
           <ul className="payment-cash-type">
-            {cashInfo.map(({ value }) => (
-              <li key={`cash_${value}`} onClick={() => handleInputCash(value)}>
-                {insertComma(value)}원 ({inputCash.count[value]})
+            {cashReserve.map(({ id, value }) => (
+              <li key={`cash_${id}`} onClick={() => handleInsertedCash(value)}>
+                {insertComma(value)}원 ({insertedCash.count[value]})
               </li>
             ))}
           </ul>
+          <div className="payment-cash-button">
+            <button onClick={handleNextStep}>완료</button>
+            <button onClick={handleReturnCash}>반환</button>
+            <button onClick={onCancel}>취소</button>
+          </div>
         </>
+      ) : (
+        <div className="payment-cash-button">
+          <button onClick={onCancel}>거스름돈 반환</button>
+        </div>
       )}
-      <div className="payment-cash-button">
-        {stepNumber === 0 ? (
-          <>
-            <button onClick={handleComplete}>완료</button>
-            <button onClick={reset}>반환</button>
-            <button onClick={cancel}>취소</button>
-          </>
-        ) : (
-          <button onClick={cancel}>거스름돈 반환</button>
-        )}
-      </div>
     </div>
   );
 };

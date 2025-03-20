@@ -21,7 +21,7 @@
   background: skyblue;
   list-style: none;
 
-  .machine-products-sample {
+  .products-sample {
     @include main.flexSort(center, end);
     list-style: none;
     height: 70%;
@@ -30,7 +30,7 @@
     text-align: center;
     font-weight: bold;
 
-    .item {
+    li {
       @include main.flexSort(space-between, none);
       width: 50px;
       height: 100px;
@@ -41,7 +41,7 @@
     }
   }
 
-  .machine-products-button {
+  .products-button {
     @include main.flexSort(center, center);
     list-style: none;
     height: 30px;
@@ -50,7 +50,7 @@
     text-align: center;
     border-bottom: 3px solid black;
 
-    .item {
+    li {
       @include main.commonBorder(2px);
       width: 50px;
       height: 15px;
