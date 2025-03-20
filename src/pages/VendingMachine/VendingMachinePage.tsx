@@ -187,6 +187,7 @@ const VendingMachinePage = () => {
             insertedCash={insertedCash}
             cashReserve={cashReserve}
             currentStep={currentStep}
+            setCashReserve={setCashReserve}
             setInsertedCash={setInsertedCash}
             setProcessStep={setProcessStep}
             onCancel={onCancel}
@@ -217,18 +218,18 @@ const VendingMachinePage = () => {
         </div>
       </div>
       {/* 현금 보유 현황 */}
-      {/* <div>
+      <div>
         <dl>
           <dt>
             <h3>현금 보유 현황</h3>
           </dt>
-          {cashReserve.map((v) => (
-            <dd key={`rest_cash_${v.value}`}>
-              {v.value}원 : {v.quantity}개
+          {Object.keys(cashReserve).map((key) => (
+            <dd key={`rest_cash_${key}`}>
+              {key}원 : {cashReserve[key]}개
             </dd>
           ))}
         </dl>
-      </div> */}
+      </div>
     </div>
   );
 };

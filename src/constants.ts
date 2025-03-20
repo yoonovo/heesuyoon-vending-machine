@@ -1,5 +1,4 @@
 import {
-  cashType,
   cashReserveType,
   productsType,
   insertedCashType,
@@ -21,13 +20,13 @@ export const msgByStep: string[] = [
 ];
 
 // 자판기 현금 정보
-export const initCashReserve: cashReserveType[] = [
-  { id: 1, value: 100, quantity: 20 },
-  { id: 2, value: 500, quantity: 20 },
-  { id: 3, value: 1000, quantity: 20 },
-  { id: 4, value: 5000, quantity: 10 },
-  { id: 5, value: 10000, quantity: 10 },
-];
+export const initCashReserve: cashReserveType = {
+  100: 5,
+  500: 5,
+  1000: 5,
+  5000: 0,
+  10000: 0,
+};
 
 // 자판기 제품 정보
 export const initProducts: productsType[] = [
@@ -39,12 +38,10 @@ export const initProducts: productsType[] = [
 // 결제 수단이 현금 일 경우, 투입된 금액 정보
 export const initInsertedCash: insertedCashType = {
   total: 0,
-  count: initCashReserve
-    .map(({ value }) => value)
-    .reduce((t: Record<number, number>, v: cashType) => {
-      t[v] = 0;
-      return t;
-    }, {}),
+  count: Object.keys(initCashReserve).reduce((t: cashReserveType, v) => {
+    t[v] = 0;
+    return t;
+  }, {}),
 };
 
 // 결제 완료된 제품 목록

@@ -1,10 +1,4 @@
-type cashType = 100 | 500 | 1000 | 5000 | 10000;
-
-type cashReserveType = {
-  id: number;
-  value: cashType; // 현금 금액
-  quantity: number; // 현금 보유 수
-};
+type cashReserveType = Record<number | string, number>;
 
 type productsType = {
   id: number;
@@ -16,7 +10,7 @@ type productsType = {
 
 type insertedCashType = {
   total: number; // 투입된 총 금액
-  count: Record<cashType, number>; // 투입된 현금들
+  count: cashReserveType; // 투입된 현금들
 };
 
-export type { cashType, cashReserveType, productsType, insertedCashType };
+export type { cashReserveType, productsType, insertedCashType };
