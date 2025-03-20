@@ -16,6 +16,7 @@ const VendingMachinePage = () => {
   const [selectedPayment, setSelectedPayment] = useState<string>("");
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [noticeMsg, setNoticeMsg] = useState<string>(msgByStep[currentStep]);
+
   const [insertedCash, setInsertedCash] = useState(initInsertedCash);
   const [cashReserve, setCashReserve] = useState(initCashReserve);
   const [productsInfo, setProductsInfo] = useState(initProducts);
@@ -136,7 +137,7 @@ const VendingMachinePage = () => {
             ))}
           </ul>
           {/* 제품 선택 버튼 */}
-          <ul className="products-button">
+          <ul className="products-button-list">
             {productsInfo.map((v) =>
               v.quantity > 0 && (currentStep === 1 || currentStep === 3) ? (
                 <li
@@ -208,7 +209,7 @@ const VendingMachinePage = () => {
             )}
           </ul>
           <button
-            className="dispenser-button"
+            className="button"
             onClick={() => setPurchasedProducts(initPurchasedProducts)}
           >
             꺼내기

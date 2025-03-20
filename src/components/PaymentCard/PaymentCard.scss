@@ -1,23 +1,8 @@
-@use "../../assets/styles/main";
-
 .payment-card {
-  @include main.flexSort(space-between, center);
-  @include main.commonBorder(5px);
+  @include flexSort(space-between, center);
+  @include commonBorder(5px);
   flex-direction: column;
   background: lightgray;
   padding: 10px;
   gap: 10px;
-
-  .payment-card-button {
-    @include main.flexSort(center, center);
-    gap: 10px;
-
-    button {
-      @include main.commonBorder(2px);
-      height: 30px;
-      width: 100px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-  }
 }

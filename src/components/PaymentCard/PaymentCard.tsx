@@ -33,14 +33,22 @@ const PaymentCard = ({
       {currentStep === 0 ? (
         <>
           <p>카드를 넣어주세요.</p>
-          <div className="payment-card-button">
-            <button onClick={handleInputCard}>카드 넣기</button>
-            <button onClick={onCancel}>취소</button>
+          <div className="button-box">
+            <button className="button" onClick={handleInputCard}>
+              카드 넣기
+            </button>
+            <button className="button" onClick={onCancel}>
+              취소
+            </button>
           </div>
         </>
       ) : (
-        <div className="payment-card-button">
-          {currentStep !== 2 && <button onClick={onCancel}>카드 빼기</button>}
+        <div className="button-box">
+          {currentStep !== 2 && (
+            <button className="button" onClick={onCancel}>
+              카드 빼기
+            </button>
+          )}
         </div>
       )}
     </div>

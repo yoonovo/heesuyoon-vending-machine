@@ -63,22 +63,30 @@ const PaymentCash = ({
       {currentStep === 0 ? (
         <>
           <p>현금을 투입해주세요.</p>
-          <ul className="payment-cash-type">
+          <ul className="cash-type-list">
             {cashReserve.map(({ id, value }) => (
               <li key={`cash_${id}`} onClick={() => handleInsertedCash(value)}>
                 {insertComma(value)}원 ({insertedCash.count[value]})
               </li>
             ))}
           </ul>
-          <div className="payment-cash-button">
-            <button onClick={handleNextStep}>완료</button>
-            <button onClick={handleReturnCash}>반환</button>
-            <button onClick={onCancel}>취소</button>
+          <div className="button-box">
+            <button className="button" onClick={handleNextStep}>
+              완료
+            </button>
+            <button className="button" onClick={handleReturnCash}>
+              반환
+            </button>
+            <button className="button" onClick={onCancel}>
+              취소
+            </button>
           </div>
         </>
       ) : (
-        <div className="payment-cash-button">
-          <button onClick={onCancel}>거스름돈 반환</button>
+        <div className="button-box">
+          <button className="button" onClick={onCancel}>
+            거스름돈 반환
+          </button>
         </div>
       )}
     </div>

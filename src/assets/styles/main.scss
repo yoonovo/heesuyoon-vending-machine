@@ -1,1 +1,15 @@
 @forward "mixins";
+
+@use "mixins";
+.button-box {
+  @include mixins.flexSort(center, center);
+  gap: 10px;
+}
+
+.button {
+  @include mixins.commonBorder(2px);
+  height: 30px;
+  width: 100px;
+  font-weight: bold;
+  cursor: pointer;
+}
