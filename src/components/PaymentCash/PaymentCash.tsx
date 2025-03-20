@@ -5,6 +5,7 @@ import {
 } from "../../types/VendingMachineType";
 import "./PaymentCash.scss";
 import { initInsertedCash } from "../../constants";
+import { useState } from "react";
 
 type PaymentCashProp = {
   currentStep: number;
@@ -25,6 +26,8 @@ const PaymentCash = ({
   setCashReserve,
   onCancel,
 }: PaymentCashProp) => {
+  const [showInquiryBtn, setShowInquiryBtn] = useState<boolean>(false);
+
   // 현금 투입시 동작
   const handleInsertedCash = (value: number) => {
     const { total: tot, count: cnt } = insertedCash;
@@ -68,7 +71,7 @@ const PaymentCash = ({
     setInsertedCash(initInsertedCash);
   };
 
-  // 거스름돈 반환
+  // 거스름돈 반환 버튼 클릭 시
   const handleCalculateCash = () => {
     const returnCash = { ...initInsertedCash.count };
     let total = insertedCash.total;
@@ -92,12 +95,25 @@ const PaymentCash = ({
 
     if (total > 0) {
       alert("거스름돈이 부족합니다. 관리자에게 문의해주세요.");
+      setShowInquiryBtn(true);
       return;
     }
 
     setCashReserve(reserveCash);
     setInsertedCash(initInsertedCash);
     onCancel();
+  };
+
+  // 문의하기 버튼 클릭 시, 자판기 보유 현금 개수가 각각 +10 증가
+  const handleInquiry = () => {
+    alert("자판기 내 현금이 보충되었습니다. 감사합니다.");
+    setShowInquiryBtn(false);
+    setCashReserve((pre) =>
+      Object.keys(pre).reduce((t: cashReserveType, key) => {
+        t[key] = pre[key] + 10;
+        return t;
+      }, {})
+    );
   };
 
   return (
@@ -133,6 +149,15 @@ const PaymentCash = ({
           <button className="button" onClick={handleCalculateCash}>
             거스름돈 반환
           </button>
+          {showInquiryBtn && (
+            <button
+              className="button"
+              style={{ background: "black", color: "white" }}
+              onClick={handleInquiry}
+            >
+              문의하기
+            </button>
+          )}
         </div>
       )}
     </div>
