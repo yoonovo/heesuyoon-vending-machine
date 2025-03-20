@@ -218,17 +218,16 @@ const VendingMachinePage = () => {
         </div>
       </div>
       {/* 현금 보유 현황 */}
-      <div>
-        <dl>
-          <dt>
-            <h3>현금 보유 현황</h3>
-          </dt>
+      <div className="cash-reserve">
+        <h3>현금 보유 현황</h3>
+        <ul className="cash-reserve-list">
           {Object.keys(cashReserve).map((key) => (
-            <dd key={`rest_cash_${key}`}>
-              {key}원 : {cashReserve[key]}개
-            </dd>
+            <li key={`rest_cash_${key}`}>
+              <p>{key}원</p>
+              <p>{cashReserve[key]}개</p>
+            </li>
           ))}
-        </dl>
+        </ul>
       </div>
     </div>
   );
