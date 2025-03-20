@@ -1,25 +1,36 @@
 import { useState } from "react";
 import "./VendingMachinePage.scss";
-// import { insertComma } from "../../utils/number";
-import { cashInfoType, productsInfoType } from "../../types/VendingMachineType";
 import PaymentCash from "../../components/PaymentCash/PaymentCash";
-
-const cashInfo: cashInfoType[] = [
-  { id: 1, value: 100, quantity: 10 },
-  { id: 2, value: 500, quantity: 10 },
-  { id: 3, value: 1000, quantity: 10 },
-  { id: 4, value: 5000, quantity: 10 },
-  { id: 5, value: 10000, quantity: 10 },
-];
-
-const productsInfo: productsInfoType[] = [
-  { id: 1, name: "Coke", value: 1100, color: "red", quantity: 10 },
-  { id: 2, name: "Water", value: 600, color: "blue", quantity: 10 },
-  { id: 3, name: "Coffee", value: 700, color: "brown", quantity: 10 },
-];
+import PaymentCard from "../../components/PaymentCard/PaymentCard";
+import {
+  cashInfo,
+  productsInfo,
+  msgByStep,
+  initInputCash,
+} from "../../constants";
 
 const VendingMachinePage = () => {
-  const [inputCash, setInputCash] = useState<number>(0);
+  const [selectedPayment, setSelectedPayment] = useState<string>("");
+  const [inputCash, setInputCash] =
+    useState<Record<number, number>>(initInputCash);
+  const [stepNumber, setStepNumber] = useState<number>(0);
+  const [noticeMsg, setNoticeMsg] = useState<string>(msgByStep[stepNumber]);
+
+  const onCancel = () => {
+    setSelectedPayment("");
+    setInputCash(initInputCash);
+    setStepNumber(0);
+    setNoticeMsg(msgByStep[0]);
+  };
+
+  const onSuccess = () => {
+    setStepNumber(1);
+    setNoticeMsg(msgByStep[1]);
+
+    if (selectedPayment === "card") {
+    } else if (selectedPayment === "cash") {
+    }
+  };
 
   return (
     <div className="container">
@@ -35,41 +46,59 @@ const VendingMachinePage = () => {
                 }}
               >
                 <p>{v.name}</p>
+                <p>{v.quantity}개</p>
                 <p style={{ background: "#fff", color: v.color }}>
-                  {v.value}원
+                  {v.price}원
                 </p>
               </li>
             ))}
           </ul>
           <ul className="machine-products-button">
             {productsInfo.map((v) => (
-              <li key={`machine_btn_${v.name}_${v.id}`} className="item"></li>
+              <li
+                key={`machine_btn_${v.name}_${v.id}`}
+                className={`item ${stepNumber === 1 && "active"}`}
+              >
+                {stepNumber === 1 && "Click"}
+              </li>
             ))}
           </ul>
         </div>
-        <div className="notice">결제수단을 선택해주세요.</div>
-        <div className="payment-type">
-          <div className="item">카드</div>
-          <div className="item">현금</div>
-        </div>
+        <div className="notice">{noticeMsg}</div>
+        {selectedPayment === "" && (
+          <div className="payment-type">
+            <div className="item" onClick={() => setSelectedPayment("card")}>
+              카드
+            </div>
+            <div className="item" onClick={() => setSelectedPayment("cash")}>
+              현금
+            </div>
+          </div>
+        )}
+        {/* 카드 */}
+        {selectedPayment === "card" && (
+          <PaymentCard
+            stepNumber={stepNumber}
+            success={onSuccess}
+            cancel={onCancel}
+          />
+        )}
         {/* 현금 */}
-        <PaymentCash
-          inputCash={inputCash}
-          cashInfo={cashInfo}
-          setInputCash={setInputCash}
-        />
+        {selectedPayment === "cash" && (
+          <PaymentCash
+            inputCash={inputCash}
+            cashInfo={cashInfo}
+            stepNumber={stepNumber}
+            setInputCash={setInputCash}
+            success={onSuccess}
+            cancel={onCancel}
+          />
+        )}
+        {/* 결제 */}
+        {stepNumber === 1 && <div className="dispenser"></div>}
       </div>
-      <div>
-        <dl>
-          <dt>
-            <h3>제품 재고 현황</h3>
-          </dt>
-          {productsInfo.map((v) => (
-            <dd key={`rest_products_${v.name}`}>
-              {v.name} : {v.quantity}개
-            </dd>
-          ))}
-        </dl>
+      {/* 현금 보유 현황 */}
+      {/* <div>
         <dl>
           <dt>
             <h3>현금 보유 현황</h3>
@@ -80,7 +109,7 @@ const VendingMachinePage = () => {
             </dd>
           ))}
         </dl>
-      </div>
+      </div> */}
     </div>
   );
 };

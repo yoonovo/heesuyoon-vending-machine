@@ -7,7 +7,7 @@ type cashInfoType = {
 type productsInfoType = {
   id: number;
   name: string; // 제품명
-  value: number; // 제품 가격
+  price: number; // 제품 가격
   color: string; // 제품 색
   quantity: number; // 재품 보유 수
 };
