@@ -7,6 +7,7 @@ import {
   initProductsInfo,
   msgByStep,
   initInputCash,
+  initPurchasedProducts,
 } from "../../constants";
 import { productsInfoType } from "../../types/VendingMachineType";
 
@@ -18,14 +19,9 @@ const VendingMachinePage = () => {
   const [inputCash, setInputCash] = useState(initInputCash);
   const [cashInfo, setCashInfo] = useState(initCashInfo);
   const [productsInfo, setProductsInfo] = useState(initProductsInfo);
-
-  const [purchasedProducts, setPurchasedProducts] = useState<
-    Record<string, number>
-  >({
-    Coke: 0,
-    Water: 0,
-    Coffee: 0,
-  });
+  const [purchasedProducts, setPurchasedProducts] = useState(
+    initPurchasedProducts
+  );
 
   const onCancel = () => {
     setSelectedPayment("");
@@ -181,26 +177,29 @@ const VendingMachinePage = () => {
             cancel={onCancel}
           />
         )}
-        {/* 제품 선택시 배출구 노출*/}
-        {stepNumber >= 1 && (
-          <div className="dispenser">
-            <ul className="purchased-products">
-              {productsInfo.map(({ name, color }) =>
-                purchasedProducts[name] > 0 ? (
-                  <li
-                    key={`purchased_products_${name}`}
-                    style={{ background: color }}
-                  >
-                    {name} {purchasedProducts[name]}개
-                  </li>
-                ) : (
-                  ""
-                )
-              )}
-            </ul>
-            <button className="dispenser-button">꺼내기</button>
-          </div>
-        )}
+        {/* 결제한 제품 출력 부분 */}
+        <div className="dispenser">
+          <ul className="purchased-products">
+            {productsInfo.map(({ name, color }) =>
+              purchasedProducts[name] > 0 ? (
+                <li
+                  key={`purchased_products_${name}`}
+                  style={{ background: color }}
+                >
+                  {name} {purchasedProducts[name]}개
+                </li>
+              ) : (
+                ""
+              )
+            )}
+          </ul>
+          <button
+            className="dispenser-button"
+            onClick={() => setPurchasedProducts(initPurchasedProducts)}
+          >
+            꺼내기
+          </button>
+        </div>
       </div>
       {/* 현금 보유 현황 */}
       {/* <div>
