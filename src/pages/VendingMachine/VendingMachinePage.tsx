@@ -3,32 +3,109 @@ import "./VendingMachinePage.scss";
 import PaymentCash from "../../components/PaymentCash/PaymentCash";
 import PaymentCard from "../../components/PaymentCard/PaymentCard";
 import {
-  cashInfo,
-  productsInfo,
+  initCashInfo,
+  initProductsInfo,
   msgByStep,
   initInputCash,
 } from "../../constants";
+import { productsInfoType } from "../../types/VendingMachineType";
 
 const VendingMachinePage = () => {
   const [selectedPayment, setSelectedPayment] = useState<string>("");
-  const [inputCash, setInputCash] =
-    useState<Record<number, number>>(initInputCash);
   const [stepNumber, setStepNumber] = useState<number>(0);
   const [noticeMsg, setNoticeMsg] = useState<string>(msgByStep[stepNumber]);
+
+  const [inputCash, setInputCash] = useState(initInputCash);
+  const [cashInfo, setCashInfo] = useState(initCashInfo);
+  const [productsInfo, setProductsInfo] = useState(initProductsInfo);
+
+  const [purchasedProducts, setPurchasedProducts] = useState<
+    Record<string, number>
+  >({
+    Coke: 0,
+    Water: 0,
+    Coffee: 0,
+  });
 
   const onCancel = () => {
     setSelectedPayment("");
     setInputCash(initInputCash);
-    setStepNumber(0);
-    setNoticeMsg(msgByStep[0]);
+    setProcessStep(0);
   };
 
   const onSuccess = () => {
-    setStepNumber(1);
-    setNoticeMsg(msgByStep[1]);
+    setProcessStep(1);
+  };
 
-    if (selectedPayment === "card") {
-    } else if (selectedPayment === "cash") {
+  const setProcessStep = (number: number) => {
+    setStepNumber(number);
+    setNoticeMsg(msgByStep[number]);
+  };
+
+  const handleCompletePayment = (
+    product: productsInfoType,
+    callback?: () => void
+  ) => {
+    setTimeout(() => {
+      callback?.();
+      setProcessStep(3);
+      setProductsInfo(
+        productsInfo.map((v) =>
+          v.id === product.id
+            ? Object.assign({}, v, { quantity: v.quantity - 1 })
+            : v
+        )
+      );
+      setPurchasedProducts(
+        Object.assign({}, purchasedProducts, {
+          [product.name]: purchasedProducts[product.name] + 1,
+        })
+      );
+    }, 1000);
+  };
+
+  const onPayment = (product: productsInfoType) => {
+    // 금액 확인
+    switch (selectedPayment) {
+      case "card":
+        const isSuccess = Math.random() < 0.9; // 10% 확률로 오류발생
+        if (!isSuccess) {
+          alert("카드 결제 오류 입니다. 다시 시도해주세요.");
+          break;
+        } else {
+          setProcessStep(2);
+        }
+
+        handleCompletePayment(product);
+        break;
+      case "cash":
+        const { total, count } = inputCash;
+
+        // 가장 싼 제품의 가격보다 잔액이 부족한 경우
+        const minPrice = productsInfo
+          .map(({ price }) => price)
+          .sort((a, b) => a - b)[0];
+        if (total < minPrice) {
+          alert("잔액이 부족합니다.");
+          setNoticeMsg("잔액이 부족합니다.");
+          break;
+        }
+
+        // 선택한 제품의 가격보다 잔액이 부족한 경우
+        if (total < product.price) {
+          alert("잔액이 부족합니다.");
+          setProcessStep(1);
+          break;
+        } else {
+          setProcessStep(2);
+        }
+
+        // 총 금액 차감
+        const callback = () =>
+          setInputCash({ total: total - product.price, count });
+
+        handleCompletePayment(product, callback);
+        break;
     }
   };
 
@@ -53,15 +130,25 @@ const VendingMachinePage = () => {
               </li>
             ))}
           </ul>
+          {/* 음료 선택 버튼 */}
           <ul className="machine-products-button">
-            {productsInfo.map((v) => (
-              <li
-                key={`machine_btn_${v.name}_${v.id}`}
-                className={`item ${stepNumber === 1 && "active"}`}
-              >
-                {stepNumber === 1 && "Click"}
-              </li>
-            ))}
+            {productsInfo.map((v) =>
+              v.quantity > 0 && (stepNumber === 1 || stepNumber === 3) ? (
+                <li
+                  key={`machine_btn_${v.name}_${v.id}`}
+                  className={`item active`}
+                  onClick={() => {
+                    onPayment(v);
+                  }}
+                >
+                  Click
+                </li>
+              ) : (
+                <li key={`machine_btn_${v.name}_${v.id}`} className={`item`}>
+                  {v.quantity > 0 ? "" : "X"}
+                </li>
+              )
+            )}
           </ul>
         </div>
         <div className="notice">{noticeMsg}</div>
@@ -94,8 +181,21 @@ const VendingMachinePage = () => {
             cancel={onCancel}
           />
         )}
-        {/* 결제 */}
-        {stepNumber === 1 && <div className="dispenser"></div>}
+        {/* 제품 선택시 배출구 노출*/}
+        {stepNumber >= 1 && (
+          <div className="dispenser">
+            {Object.keys(purchasedProducts).map((v) =>
+              purchasedProducts[v] > 0 ? (
+                <div key={`dispenser_${v}`}>
+                  {v} {purchasedProducts[v]}개
+                </div>
+              ) : (
+                ""
+              )
+            )}
+            <button>꺼내기</button>
+          </div>
+        )}
       </div>
       {/* 현금 보유 현황 */}
       {/* <div>

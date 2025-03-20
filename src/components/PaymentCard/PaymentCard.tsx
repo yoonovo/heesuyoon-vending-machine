@@ -33,7 +33,7 @@ const PaymentCard = ({ stepNumber, success, cancel }: PaymentCardProp) => {
             <button onClick={cancel}>취소</button>
           </>
         ) : (
-          <button onClick={cancel}>카드 빼기</button>
+          stepNumber !== 2 && <button onClick={cancel}>카드 빼기</button>
         )}
       </div>
     </div>

@@ -1,6 +1,8 @@
+type cashType = 100 | 500 | 1000 | 5000 | 10000;
+
 type cashInfoType = {
   id: number;
-  value: number; // 현금 금액
+  value: cashType; // 현금 금액
   quantity: number; // 현금 보유 수
 };
 
@@ -12,4 +14,9 @@ type productsInfoType = {
   quantity: number; // 재품 보유 수
 };
 
-export type { cashInfoType, productsInfoType };
+type inputCashType = {
+  total: number; // 투입된 총 금액
+  count: Record<cashType, number>; // 투입된 현금들
+};
+
+export type { cashType, cashInfoType, productsInfoType, inputCashType };

@@ -1,14 +1,17 @@
-import { useMemo } from "react";
 import { insertComma } from "../../utils/number";
-import { cashInfoType } from "../../types/VendingMachineType";
+import {
+  cashType,
+  cashInfoType,
+  inputCashType,
+} from "../../types/VendingMachineType";
 import "./PaymentCash.scss";
 import { initInputCash } from "../../constants";
 
 type PaymentCashProp = {
   stepNumber: number;
-  inputCash: Record<number, number>;
+  inputCash: inputCashType;
   cashInfo: cashInfoType[];
-  setInputCash: (v: Record<number, number>) => void;
+  setInputCash: (v: inputCashType) => void;
   success: () => void;
   cancel: () => void;
 };
@@ -23,19 +26,26 @@ const PaymentCash = ({
   success,
   cancel,
 }: PaymentCashProp) => {
-  const handleInputCash = (value: number) => {
-    if (totalInputCash + value > MAX_VALUE) {
+  const handleInputCash = (value: cashType) => {
+    const { total: tot, count: cnt } = inputCash;
+
+    if (tot + value > MAX_VALUE) {
       alert("5만원 이상은 투입이 불가능 합니다.");
       return;
     }
 
-    setInputCash(
-      Object.assign({}, inputCash, { [value]: inputCash[value] + 1 })
-    );
+    const count = Object.assign({}, cnt, { [value]: cnt[value] + 1 });
+    const total = Object.keys(count).reduce((t, v) => {
+      const key = Number(v) as cashType;
+      t += key * count[key];
+      return t;
+    }, 0);
+
+    setInputCash({ total, count });
   };
 
   const handleComplete = () => {
-    if (totalInputCash === 0) {
+    if (inputCash.total === 0) {
       alert("투입된 금액이 없습니다.");
       return;
     }
@@ -46,25 +56,16 @@ const PaymentCash = ({
     setInputCash(initInputCash);
   };
 
-  const totalInputCash = useMemo(
-    () =>
-      Object.keys(inputCash).reduce(
-        (t, v) => (t += Number(v) * inputCash[Number(v)]),
-        0
-      ),
-    [inputCash]
-  );
-
   return (
     <div className="payment-cash">
-      <h2>총 금액 : {insertComma(totalInputCash)}원</h2>
+      <h2>총 금액 : {insertComma(inputCash.total)}원</h2>
       {stepNumber === 0 && (
         <>
           <p>현금을 투입해주세요.</p>
           <ul className="payment-cash-type">
             {cashInfo.map(({ value }) => (
               <li key={`cash_${value}`} onClick={() => handleInputCash(value)}>
-                {insertComma(value)}원 ({inputCash[value]})
+                {insertComma(value)}원 ({inputCash.count[value]})
               </li>
             ))}
           </ul>
